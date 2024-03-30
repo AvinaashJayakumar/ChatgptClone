@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Clone</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .response {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Welcome to ChatGPT Clone</h1>
+        <div>
+            <h2>Ask a question:</h2>
+            <input type="text" id="user-input" placeholder="Type your message...">
+            <button id="send-button">Send</button>
+        </div>
+        <div class="response">
+            <h2>Assistant's Response:</h2>
+            <div id="assistant-messages"></div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userInput = document.getElementById('user-input');
+            const sendButton = document.getElementById('send-button');
+            const assistantMessages = document.getElementById('assistant-messages');
+        
+            sendButton.addEventListener('click', () => {
+                const userMessage = userInput.value.trim();
+                if (userMessage !== '') {
+                    // Send the user's message to the server
+                    fetch('/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ message: userMessage })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Create a container for the assistant's message
+                        const messageContainer = document.createElement('div');
+                        messageContainer.className = 'assistant-message';
+        
+                        // Append the assistant's response
+                        const assistantText = document.createElement('p');
+                        assistantText.textContent = `Assistant: ${data.message}`;
+                        messageContainer.appendChild(assistantText);
+        
+                        // Append the user's message
+                        const userText = document.createElement('p');
+                        userText.textContent = `You: ${userMessage}`;
+                        messageContainer.appendChild(userText);
+        
+                        // Append the message container to the conversation
+                        assistantMessages.appendChild(messageContainer);
+        
+                        // Scroll to the bottom of the response container
+                        assistantMessages.scrollTop = assistantMessages.scrollHeight;
+        
+                        userInput.value = '';
+                    })
+                    .catch(error => console.error(error));
+                }
+            });
+        });
+        
+    </script>
+</body>
+
+</html>
